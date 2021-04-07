@@ -4,7 +4,9 @@ public class MonthlySales {
 
 	Integer bookSold;
 	String title;
+	Integer bookId;
 	String month;
+	
 	public Integer getBookSold() {
 		return bookSold;
 	}
@@ -22,6 +24,12 @@ public class MonthlySales {
 	}
 	public void setMonth(String month) {
 		this.month = month;
+	}
+	public Integer getBookId() {
+		return bookId;
+	}
+	public void setBookId(Integer bookId) {
+		this.bookId = bookId;
 	}
 	@Override
 	public String toString() {

@@ -42,28 +42,11 @@ public class ProjectConfig extends WebSecurityConfigurerAdapter {
 		
 		http.csrf().disable();
 		
-//		http.cors(
-//				c-> {
-//					CorsConfigurationSource source = request ->{
-//						CorsConfiguration config = new CorsConfiguration();
-//						config.setAllowedOrigins(
-//								List.of("*")
-//								);
-//						config.setAllowedMethods(
-//								List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")
-//								);
-//						return config;
-//					};
-//					
-//					c.configurationSource(source);
-//				}
-//				);
-		
 		http.cors(c -> {
 			CorsConfigurationSource source = request -> {
 			CorsConfiguration config = new CorsConfiguration();
-			config.setAllowedOriginPatterns(List.of("*"));
-			config.setAllowedMethods(List.of("*"));
+			config.setAllowedOrigins(List.of("http://localhost:3000"));
+			config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 			config.setAllowedHeaders(List.of("*"));
 			config.setExposedHeaders(List.of("*"));
 			config.setAllowCredentials(true);
@@ -77,11 +60,21 @@ public class ProjectConfig extends WebSecurityConfigurerAdapter {
 		http.addFilterAt(usernamePasswordAuthenticationFilter, BasicAuthenticationFilter.class)
 			.addFilterAfter(jwtRequestFilter, BasicAuthenticationFilter.class);
 		
-		http.authorizeRequests()
-		.antMatchers("/register","/login")
-		.permitAll()
+//		http.authorizeRequests()
+//		.antMatchers("/register","/login")
+//		.permitAll()
+//		.anyRequest()
+//		.authenticated();
+		
+		
+		http.authorizeRequests().antMatchers("/checkout")
+		.hasAnyAuthority("checkout")
+		.antMatchers("/catalog")
+		.hasAnyAuthority("rest")
+		.antMatchers("/monthlyStats","/topSales","/topViews")
+		.hasAuthority("report")
 		.anyRequest()
-		.authenticated();
+		.permitAll();
 	}
 	
 	@Override

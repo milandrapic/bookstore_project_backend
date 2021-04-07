@@ -5,6 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Shipping {
@@ -14,8 +18,10 @@ public class Shipping {
 	@Column(name = "shipping_id")
 	private Integer shippingId;
 	
-	@Column(name = "username")
-	private String username;
+	@OneToOne
+	@JoinColumn(name = "user")
+	@JsonIgnore
+	private User user;
 	
 	//billing or shipping, make into enum
 	@Column(name = "type")
@@ -48,7 +54,6 @@ public class Shipping {
 		return shippingId;
 	}
 
-	
 	public Integer getShippingId() {
 		return shippingId;
 	}
@@ -59,12 +64,13 @@ public class Shipping {
 	}
 
 
-	public String getUsername() {
-		return username;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public String getType() {
@@ -138,7 +144,7 @@ public class Shipping {
 		builder.append("Shipping [shippingId=");
 		builder.append(shippingId);
 		builder.append(", username=");
-		builder.append(username);
+		builder.append(user);
 		builder.append(", type=");
 		builder.append(type);
 		builder.append(", firstName=");

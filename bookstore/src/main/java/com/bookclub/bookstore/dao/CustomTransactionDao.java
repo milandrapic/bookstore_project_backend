@@ -5,9 +5,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.criteria.Root;
-
-import org.hibernate.Criteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -17,33 +14,22 @@ import com.bookclub.bookstore.model.User;
 
 @Repository
 public class CustomTransactionDao {
-	
-
-	//to do: 
-	//get all transactions
-	//get transactions by user
-	//get transactions by book
-	//get transactions by book and user for past month
-	//get transactions by all transactions for past month
-	
-	//aggregate to get value sold per book
-	
 
 	@Autowired
 	private EntityManager manager;
 	
 	public List<Transaction> getTransactionsByBook(Book b) {
 		List<Transaction> transactions = 
-				this.manager.createQuery("from Transaction t where t.book = :bookId",Transaction.class)
-				.setParameter("bookId", b).getResultList();
+				this.manager.createQuery("from Transaction t where t.book = :book",Transaction.class)
+				.setParameter("book", b).getResultList();
 		
 		return transactions;
 	}
 	
 	public List<Transaction> getTransactionsByUser(User u) {
 		List<Transaction> transactions = 
-				this.manager.createQuery("from Transaction t where t.user = :userId",Transaction.class)
-				.setParameter("userId", u).getResultList();
+				this.manager.createQuery("from Transaction t where t.user = :user",Transaction.class)
+				.setParameter("user", u).getResultList();
 		
 		return transactions;
 	}
@@ -54,10 +40,10 @@ public class CustomTransactionDao {
  
 		List<Transaction> transactions = 
 				this.manager.createQuery
-				("from Transaction t where t.book = :bookId "
+				("from Transaction t where t.book = :book "
 				+ "and t.date > :date"
 						,Transaction.class)
-				.setParameter("bookId", b)
+				.setParameter("book", b)
 				.setParameter("date", pastDate)
 				.getResultList();
 		
@@ -72,9 +58,9 @@ public class CustomTransactionDao {
 		
 		List<Transaction> transactions = 
 				this.manager.createQuery
-				("from Transaction t where t.user = :userId "
+				("from Transaction t where t.user = :user "
 				+ "and t.date > :date",Transaction.class)
-				.setParameter("userId", u)
+				.setParameter("user", u)
 				.setParameter("date", pastDate)
 				.getResultList();
 		
@@ -82,23 +68,6 @@ public class CustomTransactionDao {
 		
 		return transactions;
 	}
-	
-//	public List<Transaction> getTransactionsByMonth() {
-//		 
-//		Date pastDate = java.sql.Date.valueOf(LocalDate.now().minusDays(30));
-//		
-//		Root<Transaction> t = Criteria
-//		
-//		List<Transaction> transactions = 
-//				this.manager.createQuery
-//				("from Transaction t",Transaction.class).getResultList()
-//				;
-//
-//		
-//		System.out.println(transactions);
-//		
-//		return transactions;
-//	}
 	
 	
 }

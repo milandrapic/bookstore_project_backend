@@ -16,6 +16,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.bookclub.bookstore.authentication.UsernamePasswordAuth;
+import com.bookclub.bookstore.model.User;
+import com.bookclub.bookstore.service.JpaUserDetailsService;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -24,7 +26,10 @@ import io.jsonwebtoken.security.Keys;
 public class UsernamePasswordAuthFilter extends OncePerRequestFilter{
 	
 	@Autowired
-	AuthenticationManager authManager;
+	private AuthenticationManager authManager;
+	
+	@Autowired
+	private JpaUserDetailsService userService;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -39,7 +44,6 @@ public class UsernamePasswordAuthFilter extends OncePerRequestFilter{
 		a = authManager.authenticate(a);
 		
 		//send back the token in the response object.
-		
 		String key = "eecs4413finalprojectsecurejwtsigningkeyeecs4413finalprojectsecurejwtsigningkeyeecs4413finalprojectsecurejwtsigningkey";
 		String token = Jwts.builder()
 							.setSubject(a.getName())
@@ -49,7 +53,9 @@ public class UsernamePasswordAuthFilter extends OncePerRequestFilter{
 							.signWith(Keys.hmacShaKeyFor(key.getBytes()))
 							.compact();
 		
+		User u = this.userService.loadUserObjectByUsername(username.toString());
 		response.addHeader("Authorization", "Bearer " + token);
+		response.addHeader("role",u.getRole().toString());
 		System.out.println("set expires to: " + java.sql.Date.valueOf(LocalDate.now().plusWeeks(1)));
 		response.setHeader("expires", java.sql.Date.valueOf(LocalDate.now().plusWeeks(1)).toString());
 		

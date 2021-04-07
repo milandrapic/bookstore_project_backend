@@ -16,7 +16,7 @@ public class Book {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "book_id")
-	private Integer id;
+	private Integer bookId;
 	
 	@Column(name = "title")
 	private String title;
@@ -30,15 +30,26 @@ public class Book {
 	@Column(name = "price")
 	private double price;
 	
+	@Column(name = "image")
+	private String image;
+	
+	@Column(name = "description")
+	private String description;
+	
+	@Column(name = "user_views")
+	private Integer userViews;
+	
 	@OneToMany(mappedBy = "book", cascade = CascadeType.ALL)
 	private List<Review> reviews;
 
-	public Integer getId() {
-		return id;
+	
+
+	public Integer getBookId() {
+		return bookId;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	public void setBookId(Integer bookId) {
+		this.bookId = bookId;
 	}
 
 	public String getTitle() {
@@ -87,6 +98,32 @@ public class Book {
 	public void setReviews(List<Review> reviews) {
 		this.reviews = reviews;
 	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Integer getUserViews() {
+		return userViews;
+	}
+
+	public void setUserViews(Integer userViews) {
+		this.userViews = userViews;
+	}
+	
+	
 	
 	
 	

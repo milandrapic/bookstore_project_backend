@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import com.bookclub.bookstore.dao.BookRepository;
 import com.bookclub.bookstore.dao.CustomBookRepository;
 import com.bookclub.bookstore.model.Book;
+import com.bookclub.bookstore.model.MonthlySales;
+import com.bookclub.bookstore.model.TopBookSales;
 
 
 @Service
@@ -33,8 +35,29 @@ public class JpaBookService {
 		return bl;
 	}
 	
+	public List<Book> getAllBooks(){
+		List<Book> bl =this.bookDao.findAll();
+		return bl;
+	}
+	
 	public Book getBookById(int id) {
 		return this.bookDao.findById(id).orElse(null);
+	}
+	
+	public List<MonthlySales> getMonthlySales() {
+		return this.customBookDao.monthlyStats();
+	}
+	
+	public List<TopBookSales> getTopSales() {
+		return this.customBookDao.topSales();
+	}
+	
+	public void addView(Book b) {
+		this.customBookDao.addView(b);
+	}
+	
+	public List<Book> getTopViews() {
+		return this.customBookDao.topViews();
 	}
 
 }

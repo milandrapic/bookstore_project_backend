@@ -27,7 +27,7 @@ public class JpaUserDetailsService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Optional<User> o = dao.findByUsername(username);
-
+		
 		User u = o.orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " not found"));
 		return new UserPrincipal(u);
 	}
@@ -41,9 +41,6 @@ public class JpaUserDetailsService implements UserDetailsService {
 	
 	public User register(User user) {
         String encryptPW = bcrypt.encode(user.getPassword());
-//        User u = new User();
-//        u.setUsername(user.getUsername());
-//        u.setPassword(encryptPW);
         user.setPassword(encryptPW);
         user.setRole(Role.ROLE_USER);
         User newUser = this.dao.save(user);
@@ -52,5 +49,8 @@ public class JpaUserDetailsService implements UserDetailsService {
         return user;
     }
 	
+	public User updateUser(User u) {
+		return this.dao.save(u);
+	}
 
 }

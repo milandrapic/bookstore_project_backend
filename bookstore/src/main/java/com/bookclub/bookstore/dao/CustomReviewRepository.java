@@ -20,8 +20,8 @@ public class CustomReviewRepository {
 	@Transactional
 	public List<Review> getReviewsByBook(Book book){
 		List<Review> reviews = 
-				this.entityManager.createQuery("from Review r where r.book = :bookId",Review.class)
-				.setParameter("bookId", book).getResultList();
+				this.entityManager.createQuery("from Review r where r.book = :book",Review.class)
+				.setParameter("book", book).getResultList();
 		
 		return reviews;
 	}

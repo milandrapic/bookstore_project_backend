@@ -5,6 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Billing {
@@ -14,8 +18,10 @@ public class Billing {
 	@Column(name = "billing_id")
 	private Integer id;
 	
-	@Column(name = "username")
-	private String username;
+	@OneToOne
+	@JoinColumn(name = "user")
+	@JsonIgnore
+	private User user;
 	
 	//billing or shipping, make into enum
 	@Column(name = "type")
@@ -54,13 +60,15 @@ public class Billing {
 	}
 
 
-	public String getUsername() {
-		return username;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+
+	public void setUser(User user) {
+		this.user = user;
 	}
+
 
 	public String getType() {
 		return type;

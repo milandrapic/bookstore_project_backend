@@ -21,28 +21,35 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.bookclub.bookstore.io.AddCardRequest;
 import com.bookclub.bookstore.io.AddReviewRequest;
+import com.bookclub.bookstore.io.CheckoutRequest;
 import com.bookclub.bookstore.io.TransactionRequest;
+import com.bookclub.bookstore.model.Billing;
 import com.bookclub.bookstore.model.Book;
 import com.bookclub.bookstore.model.Card;
 import com.bookclub.bookstore.model.MonthlySales;
 import com.bookclub.bookstore.model.Review;
+import com.bookclub.bookstore.model.Shipping;
+import com.bookclub.bookstore.model.TopBookSales;
 import com.bookclub.bookstore.model.Transaction;
 import com.bookclub.bookstore.model.User;
+import com.bookclub.bookstore.model.UserSpentOnBook;
+import com.bookclub.bookstore.model.UserTotalSpent;
+import com.bookclub.bookstore.service.AddressService;
 import com.bookclub.bookstore.service.JpaBookService;
 import com.bookclub.bookstore.service.JpaCardService;
 import com.bookclub.bookstore.service.JpaUserDetailsService;
 import com.bookclub.bookstore.service.ReviewService;
 import com.bookclub.bookstore.service.TransactionService;
+import com.bookclub.bookstore.service.UserAnalyticsService;
 
 import javassist.expr.NewArray;
-
 
 
 @RestController
 public class TestController {
 
-	@Autowired 
-	DataSource ds;
+	@Autowired
+	private UserAnalyticsService userAnalyticsService;
 	
 	@Autowired
 	private JpaUserDetailsService userService;
@@ -58,6 +65,9 @@ public class TestController {
 	
 	@Autowired
 	private TransactionService transactionService;
+	
+	@Autowired
+	private AddressService addressService;
 	
 	@GetMapping("/getHello")
 	public String getHello() {
@@ -106,6 +116,31 @@ public class TestController {
 				this.bookService.getBookByGenre(genre);
 
 		return books;
+	}
+	
+	@GetMapping("/catalog")
+	public List<Book> catalog(){
+		System.err.println("getting all books");
+		List<Book> books =
+				this.bookService.getAllBooks();
+
+		return books;
+	}
+	
+	@GetMapping("/getAllBooks")
+	public List<Book> getAllBooks(){
+		System.err.println("getting all books");
+		List<Book> books =
+				this.bookService.getAllBooks();
+
+		return books;
+	}
+	
+	@GetMapping("/getBookById")
+	public Book getById(@RequestParam("id") int id){
+		Book b = this.bookService.getBookById(id);
+
+		return b;
 	}
 	
 	@PostMapping("/addReview")
@@ -168,20 +203,46 @@ public class TestController {
 		return this.transactionService.getTransactionsByBookPast30Days(b);
 	}
 	
-//	to do***:
-//	@PostMapping("/checkout")
-//	public String checkout(@RequestBody CheckoutRequest request){
-//		String username = request.getUsername();
-//		Card c = request.getCard();
-//		Billing b = request.getBillingInfo();
-//		Shipping s = request.getShippingInfo();
-//		User u = this.userService.loadUserObjectByUsername(username);
-//		
-//		c.setUser(u);
-//		
-//		this.cardService.addCard(username, c);
-//		return "added";
-//	}
+	
+	//to do***:
+	@PostMapping("/checkout")
+	public User checkout(@RequestBody CheckoutRequest request){
+		List<Transaction> tl = new ArrayList<Transaction>();
+		for(TransactionRequest t: request.getTransactions()) {
+			Transaction nt = new Transaction();
+			nt.setQuantity(t.getQuantity());
+			Book b = this.bookService.getBookById(t.getBookId());
+			User u = this.userService.loadUserObjectByUsername(t.getUsername());
+			Date date = java.sql.Date.valueOf(LocalDate.now());
+			nt.setBookId(b);
+			nt.setUser(u);
+			nt.setDate(date);
+			tl.add(nt);
+		}
+		this.transactionService.addTransactions(tl);
+		
+		Billing b = request.getBillingInfo();
+		Shipping s = request.getShippingInfo();
+		User u = this.userService.loadUserObjectByUsername(request.getUsername());
+		Billing ub = this.addressService.getBillingByUser(u);
+		Shipping us = this.addressService.getShippingByUser(u);
+		if(ub != null && us != null) {
+			this.addressService.setBillingA(b, ub);
+			this.addressService.setShippingA(s, us);
+			b= ub;
+			s = us;
+			
+		}
+		b.setUser(u);
+		s.setUser(u);
+		u.setBillingInfo(b);
+		u.setShippingInfo(s);
+		
+		this.addressService.updateAddresses(s, b);
+		
+		
+		return this.userService.updateUser(u);
+	}
 	
 	@PostMapping("/register")
     public String register(@RequestBody User u){
@@ -190,34 +251,35 @@ public class TestController {
         return "registered";
     }
 	
-	@GetMapping("/stats")
-	public List<MonthlySales> stats() {
-		JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
-		List<MonthlySales> sales = jdbcTemplate.query("select sum(tr.quantity) as books_sold, b.title, DATE_FORMAT(tr.date, '%Y-%m') as mon \r\n"
-				+ "from demo_db.transaction tr \r\n"
-				+ "inner join demo_db.book b on b.book_id = tr.book_id\r\n"
-				+ "group by b.title, DATE_FORMAT(date, '%Y-%m')\r\n"
-				+ "order by mon;", (rs,row)->{
-					
-					MonthlySales monthlySales = new MonthlySales();
-					
-					Integer bookSold = rs.getInt("books_sold");
-					monthlySales.setBookSold(bookSold);
-					String title = rs.getString("title");
-					monthlySales.setTitle(title);
-					String month = rs.getString("mon");
-					monthlySales.setMonth(month);
-					return monthlySales;
-				});
-		return sales;
+	@GetMapping("/monthlyStats")
+	public List<MonthlySales> monthlyStats() {
+		return this.bookService.getMonthlySales();
 	}
 	
-//public String addInfo(@RequestBody  user){
-//		
-//		System.out.println("username: " + user.getUsername() + " controller");
-//		System.out.println("password: " + user.getPassword() + " controller");
-//		this.service.register(user);
-//        
-//        return "registered";
-//    }
+	@GetMapping("/topSales")
+	public List<TopBookSales> topSales() {
+		return this.bookService.getTopSales();
+	}
+	
+	@PostMapping("/addView")
+	public void addBookView(@RequestParam("id") int id) {
+		Book b = this.bookService.getBookById(id);
+		this.bookService.addView(b);
+	}
+	
+	@GetMapping("/topViews")
+	public List<Book> topViews() {
+		return this.bookService.getTopViews();
+	}
+	
+	@GetMapping("/userTotalSpent")
+	public List<UserTotalSpent> userTotalBuys(){
+		return this.userAnalyticsService.userTotalBuys();
+	}
+	
+	@GetMapping("/userTotalSpentOnBooks")
+	public List<UserSpentOnBook> userBookBuys(){
+		return this.userAnalyticsService.userBookBuys();
+	}
+	
 }

@@ -80,8 +80,10 @@ public class JwtRequestFilter extends OncePerRequestFilter{
 
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-		// TODO Auto-generated method stub
-		return (request.getServletPath().equals("/login") || request.getServletPath().equals("/register"));
+		String path = request.getServletPath();
+		List<String> filteredPaths = List.of("/checkout", "/monthlyStats","/topSales","/topViews", "/catalog");
+		
+		return !filteredPaths.contains(path);
 	}
 	
 	
