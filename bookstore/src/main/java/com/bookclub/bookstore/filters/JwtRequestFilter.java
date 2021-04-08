@@ -61,6 +61,14 @@ public class JwtRequestFilter extends OncePerRequestFilter{
 			
 			String username = body.getSubject();
 			
+			String userSubmitted = request.getHeader("usernameSubmitted");
+			
+			System.out.println(username.equals(userSubmitted));
+			
+			if(userSubmitted != null && !username.equals(userSubmitted)) {
+				throw new IllegalStateException("the username entered doesn't match the token");
+			}
+			
 			List<Map<String,String>> authorities = (List<Map<String,String>>) body.get("authorities");
 			System.out.println(authorities.toString());
 			Set<SimpleGrantedAuthority> simpleGrantedAuthorities = 
@@ -81,7 +89,9 @@ public class JwtRequestFilter extends OncePerRequestFilter{
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		String path = request.getServletPath();
-		List<String> filteredPaths = List.of("/checkout", "/monthlyStats","/topSales","/topViews", "/catalog");
+		List<String> filteredPaths = List.of("/checkout", "/monthlyStats",
+										"/topSales","/topViews", "/catalog","/userTotalSpent",
+										"/userTotalSpentOnBooks","/addReview");
 		
 		return !filteredPaths.contains(path);
 	}

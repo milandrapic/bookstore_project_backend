@@ -71,7 +71,9 @@ public class ProjectConfig extends WebSecurityConfigurerAdapter {
 		.hasAnyAuthority("checkout")
 		.antMatchers("/catalog")
 		.hasAnyAuthority("rest")
-		.antMatchers("/monthlyStats","/topSales","/topViews")
+		.antMatchers("/addReview")
+		.hasAuthority("review")
+		.antMatchers("/monthlyStats","/topSales","/topViews","/userTotalSpent","/userTotalSpentOnBooks")
 		.hasAuthority("report")
 		.anyRequest()
 		.permitAll();

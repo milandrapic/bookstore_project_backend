@@ -75,7 +75,7 @@ public class TestController {
 		return "get Hello";
 	}
 	
-	@PostMapping("/postHello")
+	@PostMapping("/test")
 	public String postHello() {
 		return "{\"message\": \"post Hello\"}";
 	}
