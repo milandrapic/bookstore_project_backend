@@ -1,31 +1,24 @@
 package com.bookclub.bookstore.controller;
 
-
-
-
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import javax.sql.DataSource;
 
-import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.bookclub.bookstore.io.AddCardRequest;
 import com.bookclub.bookstore.io.AddReviewRequest;
 import com.bookclub.bookstore.io.CheckoutRequest;
 import com.bookclub.bookstore.io.TransactionRequest;
 import com.bookclub.bookstore.model.Billing;
 import com.bookclub.bookstore.model.Book;
-import com.bookclub.bookstore.model.Card;
 import com.bookclub.bookstore.model.MonthlySales;
 import com.bookclub.bookstore.model.Review;
 import com.bookclub.bookstore.model.Shipping;
@@ -36,13 +29,11 @@ import com.bookclub.bookstore.model.UserSpentOnBook;
 import com.bookclub.bookstore.model.UserTotalSpent;
 import com.bookclub.bookstore.service.AddressService;
 import com.bookclub.bookstore.service.JpaBookService;
-import com.bookclub.bookstore.service.JpaCardService;
 import com.bookclub.bookstore.service.JpaUserDetailsService;
 import com.bookclub.bookstore.service.ReviewService;
 import com.bookclub.bookstore.service.TransactionService;
 import com.bookclub.bookstore.service.UserAnalyticsService;
 
-import javassist.expr.NewArray;
 
 
 @RestController
@@ -54,8 +45,6 @@ public class TestController {
 	@Autowired
 	private JpaUserDetailsService userService;
 	
-	@Autowired
-	private JpaCardService cardService;
 	
 	@Autowired
 	private JpaBookService bookService;
@@ -80,16 +69,16 @@ public class TestController {
 		return "{\"message\": \"post Hello\"}";
 	}
 
-	
-	@PostMapping("/addCard")
-	public String addCard(@RequestBody AddCardRequest request){
-		String username = request.getUsername();
-		Card c = request.getCard();
-		User u = this.userService.loadUserObjectByUsername(username);
-		c.setUser(u);
-		this.cardService.addCard(username, c);
-		return "added";
-	}
+//	
+//	@PostMapping("/addCard")
+//	public String addCard(@RequestBody AddCardRequest request){
+//		String username = request.getUsername();
+//		Card c = request.getCard();
+//		User u = this.userService.loadUserObjectByUsername(username);
+//		c.setUser(u);
+//		this.cardService.addCard(username, c);
+//		return "added";
+//	}
 	
 	@PostMapping("/addBook")
 	public String addBook(@RequestBody Book book){
@@ -97,7 +86,7 @@ public class TestController {
 		System.err.println(book.getAuthor());
 		System.err.println(book.getPrice());
 		System.err.println(book.getGenre());
-		this.bookService.addBooks(List.of(book));
+		this.bookService.addBooks(Arrays.asList(book));
 		return "added";
 	}
 	

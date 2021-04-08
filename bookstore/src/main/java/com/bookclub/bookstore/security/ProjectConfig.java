@@ -1,5 +1,6 @@
 package com.bookclub.bookstore.security;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,10 +46,10 @@ public class ProjectConfig extends WebSecurityConfigurerAdapter {
 		http.cors(c -> {
 			CorsConfigurationSource source = request -> {
 			CorsConfiguration config = new CorsConfiguration();
-			config.setAllowedOrigins(List.of("http://localhost:3000"));
-			config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-			config.setAllowedHeaders(List.of("*"));
-			config.setExposedHeaders(List.of("*"));
+			config.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+			config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+			config.setAllowedHeaders(Arrays.asList("*"));
+			config.setExposedHeaders(Arrays.asList("*"));
 			config.setAllowCredentials(true);
 			//config.applyPermitDefaultValues();
 

@@ -10,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.bookclub.bookstore.dao.UserRepository;
-import com.bookclub.bookstore.model.Card;
 import com.bookclub.bookstore.model.Role;
 import com.bookclub.bookstore.model.User;
 import com.bookclub.bookstore.model.UserPrincipal;
@@ -35,11 +34,16 @@ public class JpaUserDetailsService implements UserDetailsService {
 	public User loadUserObjectByUsername(String username) throws UsernameNotFoundException {
 		Optional<User> o = dao.findByUsername(username);
 		
-		User u = o.orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " not found"));
+		User u = o.orElse(null);
 		return u;
 	}
 	
 	public User register(User user) {
+		String username = user.getUsername();
+		User u = loadUserObjectByUsername(username);
+		if(u != null) {
+			throw new IllegalArgumentException(username+ " is already registered");
+		}
         String encryptPW = bcrypt.encode(user.getPassword());
         user.setPassword(encryptPW);
         user.setRole(Role.ROLE_USER);

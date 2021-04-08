@@ -25,10 +25,10 @@ public class CustomUserRepository {
 		List<UserSpentOnBook> userSpent = jdbcTemplate.query(
 				"select u.username, b.book_id, b.title, b.author, b.price, sum(t.quantity) as quantity,\r\n"
 				+ " s.postal_code, sum(t.quantity * b.price) as spent\r\n"
-				+ " from demo_db.user u\r\n"
-				+ "inner join demo_db.shipping s on s.shipping_id = u.shipping_id\r\n"
-				+ "inner join demo_db.transaction t on t.user_id = u.id\r\n"
-				+ "inner join demo_db.book b on b.book_id = t.book_id\r\n"
+				+ " from user u\r\n"
+				+ "inner join shipping s on s.shipping_id = u.shipping_id\r\n"
+				+ "inner join transaction t on t.user_id = u.id\r\n"
+				+ "inner join book b on b.book_id = t.book_id\r\n"
 				+ "group by u.username, b.book_id", (rs,row)->{
 					
 					UserSpentOnBook userSpentOnBook = new UserSpentOnBook();
@@ -62,10 +62,10 @@ public class CustomUserRepository {
 		List<UserTotalSpent> userSpent = jdbcTemplate.query(
 				"select u.username, sum(t.quantity) as items_bought,\r\n"
 				+ " s.postal_code, sum(t.quantity * b.price) as spent\r\n"
-				+ " from demo_db.user u\r\n"
-				+ "inner join demo_db.shipping s on s.shipping_id = u.shipping_id\r\n"
-				+ "inner join demo_db.transaction t on t.user_id = u.id\r\n"
-				+ "inner join demo_db.book b on b.book_id = t.book_id\r\n"
+				+ " from user u\r\n"
+				+ "inner join shipping s on s.shipping_id = u.shipping_id\r\n"
+				+ "inner join transaction t on t.user_id = u.id\r\n"
+				+ "inner join book b on b.book_id = t.book_id\r\n"
 				+ "group by u.username", (rs,row)->{
 					
 					UserTotalSpent userSpentTotal = new UserTotalSpent();

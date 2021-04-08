@@ -1,6 +1,7 @@
 package com.bookclub.bookstore.filters;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,6 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import jdk.internal.joptsimple.internal.Strings;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter{
@@ -89,7 +89,7 @@ public class JwtRequestFilter extends OncePerRequestFilter{
 	@Override
 	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
 		String path = request.getServletPath();
-		List<String> filteredPaths = List.of("/checkout", "/monthlyStats",
+		List<String> filteredPaths = Arrays.asList("/checkout", "/monthlyStats",
 										"/topSales","/topViews", "/catalog","/userTotalSpent",
 										"/userTotalSpentOnBooks","/addReview");
 		

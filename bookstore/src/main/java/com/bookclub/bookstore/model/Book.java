@@ -33,9 +33,6 @@ public class Book {
 	@Column(name = "image")
 	private String image;
 	
-	@Column(name = "description")
-	private String description;
-	
 	@Column(name = "user_views")
 	private Integer userViews;
 	
@@ -107,14 +104,6 @@ public class Book {
 		this.image = image;
 	}
 
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
 	public Integer getUserViews() {
 		return userViews;
 	}
@@ -122,9 +111,11 @@ public class Book {
 	public void setUserViews(Integer userViews) {
 		this.userViews = userViews;
 	}
-	
-	
-	
-	
+
+	@Override
+	public String toString() {
+		return "Book [bookId=" + bookId + ", title=" + title + ", genre=" + genre + ", author=" + author + ", price="
+				+ price + ", image=" + image + ", userViews=" + userViews + ", reviews=" + reviews + "]";
+	}
 	
 }

@@ -37,8 +37,8 @@ public class CustomBookRepository {
 	public List<MonthlySales> monthlyStats(){
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
 		List<MonthlySales> sales = jdbcTemplate.query("select sum(tr.quantity) as books_sold,b.book_id, b.title, DATE_FORMAT(tr.date, '%Y-%m') as mon \r\n"
-				+ "from demo_db.transaction tr \r\n"
-				+ "inner join demo_db.book b on b.book_id = tr.book_id\r\n"
+				+ "from transaction tr \r\n"
+				+ "inner join book b on b.book_id = tr.book_id\r\n"
 				+ "group by b.title, DATE_FORMAT(date, '%Y-%m')\r\n"
 				+ "order by mon desc, books_sold desc;", (rs,row)->{
 					
@@ -61,8 +61,8 @@ public class CustomBookRepository {
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
 		List<TopBookSales> sales = jdbcTemplate.query(
 				"select sum(tr.quantity) as books_sold, b.title, b.book_id\r\n"
-				+ "from demo_db.transaction tr\r\n"
-				+ "inner join demo_db.book b on b.book_id = tr.book_id\r\n"
+				+ "from transaction tr\r\n"
+				+ "inner join book b on b.book_id = tr.book_id\r\n"
 				+ "group by b.title\r\n"
 				+ "order by books_sold desc\r\n"
 				+ "limit 10"

@@ -14,8 +14,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 @Entity
+@Table(uniqueConstraints={@UniqueConstraint(columnNames={"username"})})
 public class User {
 	
 	@Id
@@ -26,7 +29,7 @@ public class User {
 	@Column(name = "email")
 	private String email;
 
-	@Column(name = "username", unique = true, nullable = false )
+	@Column(name = "username", nullable = false )
 	private String username;
 	
 	@Column(name = "password", nullable = false)
@@ -36,8 +39,8 @@ public class User {
 	@Column(name = "role")
 	private Role role;
 	
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-	private Set<Card> cards = new HashSet<Card>();
+//	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+//	private Set<Card> cards = new HashSet<Card>();
 	
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="shipping_id")
@@ -79,19 +82,19 @@ public class User {
 		this.role = role;
 	}
 
-	public Set<Card> getCards() {
-		return cards;
-	}
+//	public Set<Card> getCards() {
+//		return cards;
+//	}
 
-	public void addCard(Card card) {
-		card.setUser(this);
-		this.cards.add(card);
-	}
-	
-	public void setCards(Set<Card> cards) {
-//		cards.forEach(c->this.cards.add(c));
-		this.cards = cards;
-	}
+//	public void addCard(Card card) {
+//		card.setUser(this);
+//		this.cards.add(card);
+//	}
+//	
+//	public void setCards(Set<Card> cards) {
+////		cards.forEach(c->this.cards.add(c));
+//		this.cards = cards;
+//	}
 
 	public Shipping getShippingInfo() {
 		return shippingInfo;
@@ -120,8 +123,6 @@ public class User {
 		builder.append(password);
 		builder.append(", role=");
 		builder.append(role);
-		builder.append(", cards=");
-		builder.append(cards);
 		builder.append(", shippingInfo=");
 		builder.append(shippingInfo);
 		builder.append(", billingInfo=");
