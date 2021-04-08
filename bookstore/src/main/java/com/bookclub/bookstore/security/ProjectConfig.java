@@ -50,7 +50,7 @@ public class ProjectConfig extends WebSecurityConfigurerAdapter {
 			config.setAllowedHeaders(List.of("*"));
 			config.setExposedHeaders(List.of("*"));
 			config.setAllowCredentials(true);
-			config.applyPermitDefaultValues();
+			//config.applyPermitDefaultValues();
 
 			return config;
 			};
