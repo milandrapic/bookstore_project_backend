@@ -36,11 +36,12 @@ public class CustomBookRepository {
 	}
 	public List<MonthlySales> monthlyStats(){
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
-		List<MonthlySales> sales = jdbcTemplate.query("select sum(tr.quantity) as books_sold,b.book_id, b.title, DATE_FORMAT(tr.date, '%Y-%m') as mon \r\n"
+		List<MonthlySales> sales = jdbcTemplate.query(
+				"select sum(tr.quantity) as books_sold,b.book_id, b.title, VARCHAR_FORMAT(tr.date, 'YYYY-MM') as mon \r\n"
 				+ "from transaction tr \r\n"
 				+ "inner join book b on b.book_id = tr.book_id\r\n"
-				+ "group by b.title, DATE_FORMAT(date, '%Y-%m')\r\n"
-				+ "order by mon desc, books_sold desc;", (rs,row)->{
+				+ "group by b.title,b.book_id , VARCHAR_FORMAT(tr.date, 'YYYY-MM')\r\n"
+				+ "order by mon desc, books_sold desc", (rs,row)->{
 					
 					MonthlySales monthlySales = new MonthlySales();
 					
@@ -60,12 +61,12 @@ public class CustomBookRepository {
 	public List<TopBookSales> topSales(){
 		JdbcTemplate jdbcTemplate = new JdbcTemplate(ds);
 		List<TopBookSales> sales = jdbcTemplate.query(
-				"select sum(tr.quantity) as books_sold, b.title, b.book_id\r\n"
+				"select sum(tr.quantity) books_sold, b.title, b.book_id\r\n"
 				+ "from transaction tr\r\n"
 				+ "inner join book b on b.book_id = tr.book_id\r\n"
-				+ "group by b.title\r\n"
+				+ "group by b.title, b.book_id\r\n"
 				+ "order by books_sold desc\r\n"
-				+ "limit 10"
+				+ "fetch first 10 rows only"
 				, (rs,row)->{
 					
 					TopBookSales topBookSales = new TopBookSales();
@@ -98,16 +99,16 @@ public class CustomBookRepository {
         int count = query.setParameter("views",v)
         		.setParameter("bId", b.getBookId())
         		.executeUpdate();
+        System.err.println("added book view for " + b.getTitle() + " " + count);
 	}
 	
 
 	@Transactional
 	public List<Book> topViews(){
 		List<Book> bl = this.entityManager
-							.createQuery("from Book b order by b.userViews desc", Book.class)
+							.createQuery("from Book b where b.userViews != null order by b.userViews desc", Book.class)
 							.setMaxResults(10)
 							.getResultList();
-		
 		return bl;
 	}
 	

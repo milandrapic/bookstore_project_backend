@@ -29,7 +29,7 @@ public class CustomUserRepository {
 				+ "inner join shipping s on s.shipping_id = u.shipping_id\r\n"
 				+ "inner join transaction t on t.user_id = u.id\r\n"
 				+ "inner join book b on b.book_id = t.book_id\r\n"
-				+ "group by u.username, b.book_id", (rs,row)->{
+				+ "group by u.username, b.book_id, b.title, b.author, b.price, s.postal_code", (rs,row)->{
 					
 					UserSpentOnBook userSpentOnBook = new UserSpentOnBook();
 					
@@ -66,7 +66,7 @@ public class CustomUserRepository {
 				+ "inner join shipping s on s.shipping_id = u.shipping_id\r\n"
 				+ "inner join transaction t on t.user_id = u.id\r\n"
 				+ "inner join book b on b.book_id = t.book_id\r\n"
-				+ "group by u.username", (rs,row)->{
+				+ "group by u.username, s.postal_code", (rs,row)->{
 					
 					UserTotalSpent userSpentTotal = new UserTotalSpent();
 					
